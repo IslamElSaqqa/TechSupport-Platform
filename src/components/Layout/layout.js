@@ -1,6 +1,6 @@
 import React from 'react';
 
-import SignUpFormSideImage from '../../Pages/signup';
+import SignUpFormSideImage from '../../Pages/AuthenticationPages/signup';
 
 
 const Layout = () => {

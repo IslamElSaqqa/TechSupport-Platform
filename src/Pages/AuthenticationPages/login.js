@@ -1,6 +1,6 @@
 import { React, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useLogin } from '../Hooks/useLogin';
+import { useLogin } from '../../Hooks/useLogin';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -44,7 +44,7 @@ const Login = () => {
             if (successLogin) {
                 toast.success('Logged In successfully!', {
                         position: 'top-right',
-                        autoClose: 2000,
+                        autoClose: 3000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: false,

@@ -32,12 +32,11 @@ export const useLogin =  () => {
 
         if (response.ok) { 
             // save the user to local storage in key value pairs
-            localStorage.setItem('user', JSON.stringify(json))
+            sessionStorage.setItem('user', JSON.stringify(json))
 
             // update auth context using dispatch from useReducer 
             // (Type: '', payload: '')
             dispatch({ type: 'LOGIN', payload: json })
-            
             return true;
         }
             

@@ -1,21 +1,37 @@
 import React from 'react';
 import { useLogout } from '../../Hooks/useLogout';
 import classNames from 'classnames';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom'
 
 const Header = () => {
-
+    const navigate = useNavigate()
     const isActive = (path) =>{
         return window.location.pathname === path;
     };
 
     const { logout } = useLogout()
     const handleClick = () => {
-        logout()
-}
+                logout()
+                toast.success('Logged out successfully!', {
+                        position: 'top-right',
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: true,
+                });
+                    // Redirect after a short delay
+                setTimeout(() => {
+                        navigate('/login');
+                    }, 2000);
+            }
 
 
     return (
         <header className="header">
+            <ToastContainer />
         <div className="header-container">
             
             <a href="/home" >
