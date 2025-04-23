@@ -12,7 +12,6 @@ export const windowsErrorsReducer = (state, action) => {
 }
 
 // create a custom context using useReducer to share global user states
-// authReducer is a func that defines all user states
 export const WindowsErrorsContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(windowsErrorsReducer,
         { windowsErrors: null })

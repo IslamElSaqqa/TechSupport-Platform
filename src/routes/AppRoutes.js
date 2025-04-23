@@ -12,6 +12,7 @@ import Header from "../components/header&footer/header";
 import Footer from "../components/header&footer/footer";
 import WindowsErrors1 from "../components/Windows_Errors/WindowsErrors1";
 import WindowsErrors2 from "../components/Windows_Errors/WindowsErrors2";
+import RepairShops from "../Pages/RepairShop"
 
 // Helper for routes with header and footer
 const RouteWithHeaderFooter = ({ element }) => (
@@ -36,7 +37,7 @@ const AppRoutes = () => {
             <Route path="/maintenance-stores" element={<MaintenanceStores />} />
             <Route path="/windows-errors1" element={<RouteWithHeaderFooter element={<WindowsErrors1 />} />} />
             <Route path="/windows-errors2" element={<RouteWithHeaderFooter element={<WindowsErrors2 />}/>} />
-            
+            <Route path="/repair-shops" element={<RouteWithHeaderFooter element={<RepairShops />}/>} />
 
         </Routes>
     );

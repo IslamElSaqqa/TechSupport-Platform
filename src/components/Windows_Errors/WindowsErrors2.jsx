@@ -91,7 +91,9 @@ const WindowsErrors2 = () => {
           <p className="text-error">{windowsErrors?.description || "No description available."}</p>
           <h3 className="solution-title">Solution:</h3>
           <p className="text-error">{windowsErrors?.solution || "No solution provided."}</p>
-
+          <p className="info-help">
+            <b> If you need further assistance, please contact {" "}   <a href="https://support.microsoft.com/en-us/windows" target="_blank" className="MicrosoftSupp" rel="noopener noreferrer"> Microsoft Support</a> .</b>
+          </p><br></br>
           <p className="info-help"><b>Was this information helpful?</b></p>
           <div className="button-group">
             <button disabled={isLoading}  onClick={ handleYesButton}  type="submit" className="Yes-error">Yes</button>
