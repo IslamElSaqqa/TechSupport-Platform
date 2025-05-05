@@ -1,19 +1,58 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useCreatePost } from '../../Hooks/Community/useCreatePost';
 import { useAuthContext } from '../../Hooks/useAuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useCommunityContext } from '../../Hooks/Community/useCommunityContext';
 
 const Community = () => {
   const [content, setContent] = useState('');
   const [imageUpload, setImageUpload] = useState('');
   const [uploading, setUploading] = useState(false);
   const [authError, setAuthError] = useState('');
-  const [posts, setPosts] = useState([]);
   const { isLoading, error, createPost } = useCreatePost();
+  const [loading, setLoading] = useState(true); 
   const { user } = useAuthContext();
+  const { posts ,dispatch } = useCommunityContext()
   const fileInputRef = useRef();
   const navigate = useNavigate();
 
+  useEffect(() => { 
+  
+    const fetchPosts = async () => { 
+      try {
+      const res = await fetch('/api/community/posts?page=1&limit=5', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (res.status === 204) {
+        // No posts found
+        dispatch({ type: 'SET_POST', payload: [] });
+        setLoading(false);
+        return;
+      }
+
+      if (!res.ok) {
+        console.error('Failed to fetch posts');
+        setLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+      dispatch({ type: 'SET_POST', payload: data.data || [] });
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching posts:', err);
+      setLoading(false);
+    }
+  };
+    fetchPosts()
+  }, [ user,dispatch])
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -33,22 +72,21 @@ const Community = () => {
     if (success) {
       setContent('');
       setImageUpload('');
-      const res = await fetch('/api/community/posts', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`,
-        },
+      toast.success('Post created successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
       });
-      const data = await res.json();
-      setPosts(Array.isArray(data) ? data : data.posts || []);
+    
     }
   };
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
     const formData = new FormData();
     formData.append('image', file);
 
@@ -71,6 +109,7 @@ const Community = () => {
 
   return (
     <div className="content-container">
+      <ToastContainer />
       <main className="main-content">
         {authError && <div className="error">{authError}</div>}
         {error && <div className="error">{error}</div>}
@@ -100,14 +139,23 @@ const Community = () => {
                   <img src={imageUpload} alt="Post preview" className="post-image" />
                 </div>
               )}
+
+              {uploading && (
+                <div className="spinner-container">
+                  <div className="spinner"></div> 
+                </div>
+              )}
             </div>
 
             <div className="actions-button">
               <div className="actions">
                 <button
                   className="action-btn"
-                  onClick={() => fileInputRef.current.click()}
-                  disabled={uploading}
+                  type='button'
+                  onClick={() => {
+                    if (!user) return
+                    fileInputRef.current.click()
+                  }}
                 >
                   <img
                     src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/image.png"
@@ -120,6 +168,7 @@ const Community = () => {
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   style={{ display: 'none' }}
+                  disabled={ uploading}
                 />
 
                 <button className="action-btn" type="button">
@@ -129,10 +178,119 @@ const Community = () => {
                   />
                 </button>
               </div>
-              <button disabled={ isLoading} className="post-btn" type="submit">Post</button>
+              <button disabled={isLoading || uploading } className="post-btn" type="submit">
+                    POST
+              </button>
             </div>
           </div>
         </form>
+
+        {loading && (
+                    <div className="spinner-container">
+                        <div className="spinner"></div>
+                    </div>
+                )}
+
+        {/* Render Posts */}
+        <div className="posts-list">
+          {Array.isArray(posts) && posts.length > 0 ? (
+            posts.map(post => (
+              <div key={post._id} className="social-post">
+                <div className="post-header">
+                  <div className="user-info">
+                    <img 
+                      src={post.user.avatar || "https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/avatar-2.png"} 
+                      alt="User avatar" 
+                      className="avatar" 
+                    />
+                    <div className="user-details">
+                      <h3 className="username">{post.user.username || "Unknown User"}</h3>
+                    </div>
+                  </div>
+                  <img 
+                    src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/dots-thre.png" 
+                    alt="Menu" 
+                    className="menu-icon" 
+                  />
+                </div>
+
+                <div className="post-content">
+                  <p className="content-text">
+                    {post.content} <span className="orange-text">#mynewsetup</span>
+                  </p>
+                  {post.image_url && (
+                    <img src={post.image_url} alt="Post content" className="content-image" />
+                  )}
+                </div>
+
+                <div className="post-stats">
+                  <div className="stats-group">
+                    <div className="stat-item">
+                      <img 
+                        src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/thumbs-up.png" 
+                        alt="Like" 
+                      />
+                      <img 
+                        src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/vector.png" 
+                        alt="Heart" 
+                        className="heart-icon" 
+                      />
+                      <span>{post.likes} Likes</span>
+                    </div>
+                    <div className="stat-item">
+                      <img 
+                        src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/chat-dots.png" 
+                        alt="Comment" 
+                      />
+                      <span>{post.comments} Comments</span>
+                    </div>
+                    <div className="stat-item">
+                      <img 
+                        src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/share-fat.png" 
+                        alt="Share" 
+                      />
+                      <span>{post.shares} Share</span>
+                    </div>
+                  </div>
+                  <img 
+                    src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/bookmark.png" 
+                    alt="Bookmark" 
+                    className="bookmark-icon" 
+                  />
+                </div>
+
+                <div className="post-comment">
+                  <img 
+                    src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/avatar-3.png" 
+                    alt="User avatar" 
+                    className="avatar" 
+                  />
+                  <input 
+                    type="text" 
+                    placeholder="Write your comment.." 
+                    className="comment-input" 
+                  />
+                  <div className="comment-actions">
+                    
+                    <img 
+                      src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/monotone-2.png" 
+                      alt="Action 2" 
+                      className="action-icon" 
+                    />
+                    <img 
+                      src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/monotone-3.png" 
+                      alt="Action 3" 
+                      className="action-icon" 
+                    />
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div>No posts yet.</div>
+          )}
+        </div>
+
       </main>
     </div>
   );

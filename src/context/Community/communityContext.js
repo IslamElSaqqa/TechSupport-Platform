@@ -10,7 +10,7 @@ export const communityReducer = (state, action) => {
             }
         case "SET_POST":
             return {
-                posts: action.payload
+                posts: Array.isArray(action.payload) ? action.payload : []
             }
         default:
             return state

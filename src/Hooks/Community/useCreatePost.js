@@ -36,9 +36,9 @@ export const useCreatePost =  () => {
         }
 
         if (response.ok) { 
-            sessionStorage.setItem('communityData', JSON.stringify(json))
+            sessionStorage.setItem('communityData', JSON.stringify(json.post))
 
-            dispatch({ type: 'CREATE_POSTS', payload: json })
+            dispatch({ type: 'CREATE_POSTS', payload: json.post })
             return true;
         }
             
