@@ -12,6 +12,16 @@ export const communityReducer = (state, action) => {
             return {
                 posts: Array.isArray(action.payload) ? action.payload : []
             }
+        case 'ADD_POSTS':
+            return {
+                ...state,
+                posts: [...state.posts, ...action.payload],
+            };
+        case 'DELETE_POSTS':
+            return {
+                ...state,
+                posts: state.posts.filter((p)=> p._id !== action.payload._id)
+            }
         default:
             return state
     }

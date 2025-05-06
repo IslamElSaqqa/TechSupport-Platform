@@ -14,44 +14,74 @@ const Community = () => {
   const { isLoading, error, createPost } = useCreatePost();
   const [loading, setLoading] = useState(true); 
   const { user } = useAuthContext();
-  const { posts ,dispatch } = useCommunityContext()
+  const { posts, dispatch } = useCommunityContext()
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const isFetchingRef = useRef(false);
   const fileInputRef = useRef();
   const navigate = useNavigate();
 
-  useEffect(() => { 
+  useEffect(() => {
+    fetchPosts(1); // Initial fetch on mount
+  }, [user]);
   
-    const fetchPosts = async () => { 
-      try {
-      const res = await fetch('/api/community/posts?page=1&limit=5', {
+
+  // using another useEffect to handle scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.body.offsetHeight;
+  
+      if (scrollTop + windowHeight >= docHeight - 100 && !isFetchingRef.current) {
+        fetchPosts(page + 1);
+      }
+    };
+  
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [page, hasMore]);
+  
+
+
+  const fetchPosts = async (pageNum = 1) => {
+    if (isFetchingRef.current || !hasMore) return;
+    isFetchingRef.current = true;
+  
+    try {
+      const res = await fetch(`/api/community/posts?page=${pageNum}&limit=5`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
-      if (res.status === 204) {
-        // No posts found
-        dispatch({ type: 'SET_POST', payload: [] });
-        setLoading(false);
-        return;
-      }
-
+  
       if (!res.ok) {
         console.error('Failed to fetch posts');
-        setLoading(false);
         return;
       }
-
+  
       const data = await res.json();
-      dispatch({ type: 'SET_POST', payload: data.data || [] });
-      setLoading(false);
+      const newPosts = data.data || [];
+  
+      if (newPosts.length < 5) {
+        setHasMore(false); // No more posts to load
+      }
+  
+      if (pageNum === 1) {
+        dispatch({ type: 'SET_POST', payload: newPosts });
+      } else {
+        dispatch({ type: 'ADD_POSTS', payload: newPosts });
+      }
+  
+      setPage(pageNum);
     } catch (err) {
       console.error('Error fetching posts:', err);
+    } finally {
+      isFetchingRef.current = false;
       setLoading(false);
     }
   };
-    fetchPosts()
-  }, [user, dispatch])
   
   const handleSubmit = async (e) => {
     e.preventDefault();

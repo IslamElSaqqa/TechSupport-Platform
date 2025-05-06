@@ -15,31 +15,38 @@ export const useCreatePost =  () => {
         // tracking error states
         setIsLoading(true)
         setError(null)
+        try {
+            // creating The API using fetch 
+            const response = await fetch('/api/community/posts', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${user.token}`
 
-        // creating The API using fetch 
-        const response = await fetch('/api/community/posts', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization' : `Bearer ${user.token}`   
+                },
+                body: JSON.stringify(postData)
+            })
+            const json = await response.json()
 
-            },
-            body: JSON.stringify(postData)
-        })
-        const json = await response.json()
+            // check the response status
+            if (!response.ok) {
+                setIsLoading(false)
+                setError(json.error)
+                return false;
+            }
 
-        // check the response status
-        if (!response.ok) { 
-            setIsLoading(false)
-            setError(json.error)
+            if (response.ok) {
+                sessionStorage.setItem('communityData', JSON.stringify(json.post))
+                dispatch({ type: 'CREATE_POSTS', payload: json.post })
+                setIsLoading(false); // <-- Add this!
+                return true;
+            }
+        } catch (e) {
+            setError("Something went wrong");
             return false;
-        }
+        } finally { 
+            setIsLoading(false); // always reset
 
-        if (response.ok) { 
-            sessionStorage.setItem('communityData', JSON.stringify(json.post))
-
-            dispatch({ type: 'CREATE_POSTS', payload: json.post })
-            return true;
         }
             
     }
