@@ -1,4 +1,5 @@
 flexbody {
+flexbody {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -45,12 +46,13 @@ code {
   align-items: center;
   width: 100%;
   gap: 8px;
+  margin-top: 25%;
 }
 
 .divo-logo {
-  width: 140px;
-  height: 30px;
-  object-fit: contain;
+  width: 240px;
+  height: 60px;
+  object-fit: fill;
 }
 
 .logo-text {
@@ -786,6 +788,7 @@ form {
 
 
 
+
 .underline {
   width: 100%;
   height: 1px;
@@ -1076,6 +1079,7 @@ form {
   flex-direction: column;
   gap: 6px;
 }
+
 
 
 
@@ -1533,6 +1537,7 @@ form {
   flex-direction: column;
   gap: 6px;
 }
+
 
 
 
@@ -2122,6 +2127,7 @@ padding-bottom: 100px;
 
 
 
+
 .verify-button,
 .back-button {
   width: 300px;
@@ -2237,6 +2243,7 @@ input {
   padding: 8px 0;
   width: 100%;
   border-bottom: 1px solid#ccc;
+  background: transparent;
   background: transparent;
 }
 
@@ -2576,6 +2583,11 @@ textarea {
 .orange-text {
   color: #FFAE35;
 }
+.orange-text-posts {
+  color: #FFAE35;
+  text-align: center;
+  align-items: center;
+}
 
 .search-box-container-error {
   display: flex;
@@ -2599,6 +2611,7 @@ textarea {
   width: 100%;
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
+  color: black;
   color: black;
   letter-spacing: 0.5px;
   outline: none;
@@ -2828,6 +2841,7 @@ a:hover {
   width: 40px;
   height: 40px;
 }
+
 
 .section-title {
   font-family: 'Poppins', sans-serif;
@@ -3107,6 +3121,8 @@ textarea:focus {
     color: #fab261;
     position: relative;
     margin-bottom: 500px;
+    position: relative;
+    margin-bottom: 500px;
   }
   
   .sidebar-title {
@@ -3115,6 +3131,7 @@ textarea:focus {
     line-height: 24px;
     color: #000000;
     margin: 0 0 16px 0;
+    font-weight: bold;
     font-weight: bold;
   }
   
@@ -3180,6 +3197,7 @@ textarea:focus {
   
   .form-group {
     flex: 1;
+    min-width: 600px;
     min-width: 600px;
     display: flex;
     flex-direction: column;
@@ -3299,7 +3317,7 @@ textarea:focus {
 .main-content {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    
     justify-content: center;
     padding: 40px 0;
 }
@@ -3430,6 +3448,10 @@ textarea:focus {
   height: 700px; 
   position: relative;
 }
+.slide {
+  height: 700px; 
+  position: relative;
+}
 
 .text-Community{
   font-family: 'Roboto', sans-serif;
@@ -3468,13 +3490,15 @@ body {
 
 .create-post {
   width: 100%;
-  max-width: 664px;
+  max-width: 680px;
   min-height: 133px;
   background: #fff;
   border-radius: 16px;
-  padding: 8px 16px;
+  padding: 8px 20px;
   box-sizing: border-box;
   margin: 0 auto;
+  border: 1px solid #e3e8ef;
+
 }
 
 .top {
@@ -3547,6 +3571,8 @@ body {
   transition: opacity 0.2s;
   position: relative;
   margin-left: 300px;
+  position: relative;
+  margin-left: 300px;
 }
 
 .post-btn:hover {
@@ -3592,6 +3618,14 @@ body {
   letter-spacing: -0.084px;
   line-height: 20px;
 }
+.username-community{
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffa500;
+  margin: 0;
+  letter-spacing: -0.084px;
+  line-height: 20px;
+}
 
 .user-role {
   font-size: 14px;
@@ -3618,13 +3652,14 @@ body {
   color: #20293a;
   margin: 0;
   line-height: 160%;
+  Overflow-wrap: break-word;
 }
 
 .content-image {
   width: 100%;
   height: auto;
-  max-height: 260px;
-  object-fit: cover;
+  max-height: 350px;
+  object-fit: contain;
 }
 
 .post-stats {
@@ -3637,7 +3672,7 @@ body {
 
 .stats-group {
   display: flex;
-  gap: 24px;
+  gap: 40px;
 }
 
 .stat-item {
@@ -3743,9 +3778,8 @@ body {
 .post-image {
   width: 100%;
   height: auto;
-  max-height: 260px;
-  object-fit: cover;
-  border-radius: 12px;
+  max-height: 350px;
+  object-fit: contain;
 }
 
 .comment-section {
@@ -3845,8 +3879,15 @@ body {
   height: 28px;
   margin-right: 10px;
 
+
 }
 
+.search-icon2 {
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+  color: white;
+}
 .search-icon2 {
   width: 28px;
   height: 28px;
@@ -3990,6 +4031,12 @@ body {
     margin-top: 10px;
   }
 }
+
+.MicrosoftSupp{
+  color: orange;
+  font-weight: bold;
+}
+
 
 .MicrosoftSupp{
   color: orange;

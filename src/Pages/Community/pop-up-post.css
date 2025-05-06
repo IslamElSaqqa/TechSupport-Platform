@@ -1,0 +1,72 @@
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(20, 12, 12);
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .profile-icon:hover {
+    background-color: #f8943d;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .icon {
+    width: 40px;
+    height: 40px;
+    margin-top: 7px;
+  }
+  
+  
+  .dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 8px;
+    width: 240px;
+    background: transparent;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    overflow: hidden;
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .menu-item:last-child {
+    border-bottom: none;
+  }
+  
+  .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .menu-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 16px;
+    color: rgba(228, 46, 18, 0.67);
+    flex-shrink: 0;
+  }
+  .logout-keyword{
+    font-weight: bold;
+  }

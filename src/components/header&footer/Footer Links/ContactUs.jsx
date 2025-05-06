@@ -9,11 +9,11 @@ const ContactInfoSection = () => {
         <div className="contact-group">
           <div className="header-group">
             <img src="https://dashboard.codeparrot.ai/api/image/Z9DVgyppvFKitT9L/icons-ph.png" alt="Phone Icon" className="icon" />
-            <h3 className="section-title">Call To Us</h3>
+            <h3 className="section-title">Call Us</h3>
           </div>
           <div className="info-text">
-            <p>We are available 24/7, 7 days a week.</p>
-            <p>Phone: +201145625993</p>
+            <p>We are available all days of a week.</p>
+            <p>Phone: +201556381767</p>
           </div>
         </div>
 
@@ -22,11 +22,12 @@ const ContactInfoSection = () => {
         <div className="contact-group">
           <div className="header-group">
             <img src="https://dashboard.codeparrot.ai/api/image/Z9DVgyppvFKitT9L/icons-ma.png" alt="Mail Icon" className="icon" />
-            <h3 className="section-title">Write To US</h3>
+            <h3 className="section-title">Write US</h3>
           </div>
           <div className="info-text">
             <p>Fill out our form and we will contact you within 24 hours.</p>
-            <p>Email: computerrepairsdivo@gmail.com</p>
+            <p>Email: divomobilerepairs@gmail.com
+            </p>
           </div>
         </div>
       </div>
