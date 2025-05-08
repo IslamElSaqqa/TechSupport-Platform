@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useCreatePost } from '../../Hooks/Community/useCreatePost';
@@ -95,7 +95,7 @@ const Community = () => {
 
     if (!user) {
       setAuthError('Please log in to continue.');
-      setTimeout(() => navigate('/login'), 2000);
+      setTimeout(() => navigate('/login'), 1500);
       return;
     }
 
@@ -161,9 +161,9 @@ const Community = () => {
       });
       toast.success('Post updated successfully', {
         position: 'top-right',
-        autoClose: 1500,
+        autoClose: 1000,
       });
-      setTimeout(() => {  window.location.reload(); },2000)
+      setTimeout(() => {  window.location.reload(); }, 1500)
       
     } else {
       toast.error('Failed to update post', {
@@ -203,6 +203,8 @@ const Community = () => {
       <main className="main-content">
         {authError && <div className="error">{authError}</div>}
         {error && <div className="error">{error}</div>}
+        {deleteError && <div className="error">{deleteError}</div>}
+        {updateError && <div className="error">{updateError}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="create-post">
@@ -324,7 +326,7 @@ const Community = () => {
                         />
 
                       {/* Delete Functionality */}
-                        <img onClick={() => handleDelete(post._id)}
+                        <img disabled={ isDeleteLoading} onClick={() => handleDelete(post._id)}
                           src="https://res.cloudinary.com/dr9yx1tod/image/upload/v1746553320/trash-regular-240_veohgh.png"
                           alt="Delete Menu"
                           className="menu-icon"
@@ -386,7 +388,7 @@ const Community = () => {
                         src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/chat-dots.png"
                         alt="Comment"
                       />
-                      <span>{post.comments} Comments</span>
+                      <span>{Array.isArray(post.comments) ? post.comments.length : 0} Comments</span>
                     </div>
                   </div>
                 </div>

@@ -5,7 +5,6 @@ export const useSignup =  () => {
     // define Error and IsLoading States to track errors and time loading requests
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
-
     const { dispatch } = useAuthContext()
 
     const signup = async (username, email, password_hash, phone_number, user_presence = 0) => {
@@ -30,7 +29,7 @@ export const useSignup =  () => {
         }
 
         if (response.ok) { 
-            // save the user to local storage in key value pairs
+            // save the user to sessoin storage in key value pairs
             sessionStorage.setItem('user', JSON.stringify(json.user))
 
             // update auth context using dispatch from useReducer 
