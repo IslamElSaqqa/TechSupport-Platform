@@ -29,7 +29,19 @@ export const communityReducer = (state, action) => {
                 post._id === action.payload.postId
                     ? { ...post, content: action.payload.content } : post
         ),
-        };
+            };
+        case 'LIKE_POST':
+            return {
+                ...state,
+                posts: state.posts.map(post =>
+                    post._id === action.payload.postId
+                        ? {
+                            ...post,
+                            likes: action.payload.likes,
+                            likedBy: action.payload.likedBy 
+                            } : post
+                ),
+            }
         default:
             return state
     }

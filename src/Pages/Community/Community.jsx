@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCommunityContext } from '../../Hooks/Community/useCommunityContext';
 import { useDeletePost } from '../../Hooks/Community/useDeletePost';
 import { useUpdatePost } from "../../Hooks/Community/useUpdatePost"
-
+import { useTogglePost } from '../../Hooks/Community/useTogglePost';
 const Community = () => {
   const [content, setContent] = useState('');
   const [imageUpload, setImageUpload] = useState('');
@@ -19,6 +19,7 @@ const Community = () => {
   const { posts, dispatch } = useCommunityContext()
   const { deletePost, isDeleteLoading, deleteError } = useDeletePost();
   const { updatePost, updateError, isUpdateLoading } = useUpdatePost()
+  const { isLoadingToggle, errorToggle, togglePost} = useTogglePost()
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const isFetchingRef = useRef(false);
@@ -72,7 +73,7 @@ const Community = () => {
       const newPosts = data.data || [];
   
       if (newPosts.length < 5) {
-        setHasMore(false); // No more posts to load
+        setHasMore(false); 
       }
   
       if (pageNum === 1) {
@@ -121,7 +122,6 @@ const Community = () => {
     }
   };
 
-
   // handle delete
   const handleDelete = async (postId) => {
     const success = await deletePost(postId);
@@ -139,7 +139,6 @@ const Community = () => {
   };
 
   // handle Edit Click before Update
-
   const handleEditClick = (postId, currentContent) => {
     setEditingPostId(postId);
     setEditedContent(currentContent);
@@ -197,6 +196,12 @@ const Community = () => {
     }
   };
 
+// Check whether user liked the post or not!
+  const hasUserLiked = (post) => {
+    return user && Array.isArray(post.likedBy) && post.likedBy.includes(user._id);
+  };
+
+
   return (
     <div className="content-container">
       <ToastContainer />
@@ -205,6 +210,7 @@ const Community = () => {
         {error && <div className="error">{error}</div>}
         {deleteError && <div className="error">{deleteError}</div>}
         {updateError && <div className="error">{updateError}</div>}
+        {errorToggle && <div className='error'>{ errorToggle}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="create-post">
@@ -371,17 +377,26 @@ const Community = () => {
 
                 <div className="post-stats">
                   <div className="stats-group">
-                    <div className="stat-item">
+                    <div className="stat-item"
+                      onClick={() => !isLoadingToggle && togglePost(post, navigate)}
+                      style={{
+                        cursor: isLoadingToggle ? 'not-allowed' : 'pointer',
+
+                      }}>
                       <img
                         src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/thumbs-up.png"
                         alt="Like"
                       />
                       <img
-                        src="https://dashboard.codeparrot.ai/api/image/Z9SwAyppvFKitUIo/vector.png"
+                        src={
+                          hasUserLiked(post)
+                            ? "https://res.cloudinary.com/dr9yx1tod/image/upload/v1747341997/filled_heart_icon_rf7ubu.png"
+                          : "https://res.cloudinary.com/dr9yx1tod/image/upload/v1747341878/icons8-heart-100_kg64kd.png"
+                        }
                         alt="Heart"
                         className="heart-icon"
                       />
-                      <span>{post.likes} Likes</span>
+                      <span>{typeof post.likes === 'number' ? post.likes : 0} Likes</span>
                     </div>
                     <div className="stat-item">
                       <img
