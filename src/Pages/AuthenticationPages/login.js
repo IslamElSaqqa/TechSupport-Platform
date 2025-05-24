@@ -52,9 +52,7 @@ const Login = () => {
                     
                 });
 
-                result.user_presence === 1 ? setTimeout(() => { 
-                    navigate('/Dashboard')
-                }, 3200) : setTimeout(() => { 
+                setTimeout(() => { 
                     navigate('/home')
                 }, 3200) 
                 
@@ -63,25 +61,25 @@ const Login = () => {
     const { user } = useAuthContext()
 
     // prevent repetitive login when user is already logged in!
-    useEffect(() => {
-    if (user?.token) {
-        try {
-        const base64Url = user.token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const decodedPayload = JSON.parse(window.atob(base64));
-        const userPresence = decodedPayload.user_presence;
+    // useEffect(() => {
+    // if (user?.token) {
+    //     try {
+    //     const base64Url = user.token.split('.')[1];
+    //     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    //     const decodedPayload = JSON.parse(window.atob(base64));
+    //     const userPresence = decodedPayload.user_presence;
 
-        if (userPresence === 1) {
-            navigate('/Dashboard');
-        } else {
-            navigate('/home');
-        }
-        } catch (err) {
-        console.error('Error decoding token', err);
-        sessionStorage.removeItem('user');
-        }
-    }
-    }, [user, navigate]);
+    //     if (userPresence === 1) {
+    //         navigate('/Dashboard');
+    //     } else {
+    //         navigate('/home');
+    //     }
+    //     } catch (err) {
+    //     console.error('Error decoding token', err);
+    //     sessionStorage.removeItem('user');
+    //     }
+    // }
+    // }, [user, navigate]);
 
     return (
         <div className="content-container">

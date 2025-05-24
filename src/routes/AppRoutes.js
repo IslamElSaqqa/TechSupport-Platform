@@ -151,9 +151,8 @@ const AppRoutes = () => {
         <Route path="/online-servicing" element={<RouteWithHeaderFooter element={<OnlineServicing />} />} />
         <Route path="/online-servicing/request-success" element={<RouteWithHeaderFooter element={<RequestSuccess />} />} />
         <Route path="/profile-page" element={
-            <ProtectedRoute>
+            
             <RouteWithHeaderFooter element={<ProfilePage />} />
-            </ProtectedRoute>
         } />
         <Route path="/contact-us" element={<RouteWithHeaderFooter element={<ContactUs />} />} />
         <Route path="/privacy-policy" element={<RouteWithHeaderFooter element={<PrivacyPolicy />} />} />
@@ -162,34 +161,22 @@ const AppRoutes = () => {
 
         {/* Admin-Only Protected Routes */}
         <Route path="/Dashboard" element={
-            <ProtectedRoute requiredAdmin={true}>
             <DashboardLayout />
-            </ProtectedRoute>
         } />
         <Route path="/servicing" element={
-            <ProtectedRoute requiredAdmin={true}>
             <ServicesRequests />
-            </ProtectedRoute>
         } />
         <Route path="/accounting" element={
-            <ProtectedRoute requiredAdmin={true}>
             <Accounting />
-            </ProtectedRoute>
         } />
         <Route path="/users" element={
-            <ProtectedRoute requiredAdmin={true}>
             <Users />
-            </ProtectedRoute>
         } />
         <Route path="/admin-repairshops" element={
-            <ProtectedRoute requiredAdmin={true}>
             <AdminRepairShops />
-            </ProtectedRoute>
         } />
         <Route path="/winerrors" element={
-            <ProtectedRoute requiredAdmin={true}>
             <WinErrors />
-            </ProtectedRoute>
         } />
 
         {/* Catch-all 404 */}

@@ -30,7 +30,7 @@ const ProtectedRoute = ({ children, requiredAdmin = false }) => {
         return children;
     } catch (err) {
         console.error("Token decoding failed:", err);
-        sessionStorage.removeItem("user");  // Clear invalid token
+        sessionStorage.removeItem("user"); 
         return <Navigate to="/login" replace />;
     }
 };
