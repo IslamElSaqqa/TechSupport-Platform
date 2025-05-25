@@ -1,91 +1,105 @@
+// Final Header_Table.jsx with user_presence dropdown fix and password fields removed from Edit
 import React, { useState, useEffect } from 'react';
 import styles from './Header_Table.module.css';
 import sharedCss from '../Shared.module.css';
-import DynamicFormOverlay from '../EditOverlay/EditOverlay';
 import { FaEdit } from 'react-icons/fa';
+import EditOverlay from '../EditOverlay/EditOverlay';
 
-// const HeaderTable = ({ apiEndpoint = '/api/requests' }) => {
-//   const [requests, setRequests] = useState([]);
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const [startDate, setStartDate] = useState('');
-//   const [endDate, setEndDate] = useState('');
-//   const [selectedFilter, setSelectedFilter] = useState('All');
-
-//   useEffect(() => {
-//     // Fetch data from API
-//     fetchRequests();
-//   }, [currentPage, searchTerm, startDate, endDate, selectedFilter]);
-
-//   const fetchRequests = async () => {
-//     try {
-//       // Mock API call - replace with actual API endpoint
-//       const response = await fetch(apiEndpoint);
-//       const data = await response.json();
-//       setRequests(data);
-//     } catch (error) {
-//       console.error('Error fetching requests:', error);
-//     }
-//   };
-//   };
-
-
-const Header_Table = ({
-  apiEndpoint = '/api/requests',
-  title = "Service Requests",
-  profileName = "Derek Alvarado",
-  initialPage = 1,
-  itemsPerPage = 5,
-  data = [
-    { id: 'AM12CD', date: '06/06/23', name: 'Mohamed', email: 'Email@test.com' },
-    { id: 'T1AM3', date: '06/06/23', name: 'Omar', email: 'Email@test.com' },
-    { id: 'T1AM4', date: '06/06/23', name: 'Ahmed', email: 'Email@test.com' }
-  ]
-}) => {
+const Header_Table = ({ title = "All Users", profileName = "Admin" }) => {
   const [requests, setRequests] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('All');
+  const [userTypeFilter, setUserTypeFilter] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [showOverlay, setShowOverlay] = useState(false);
-  const [editData, setEditData] = useState(null);
+  const [editUser, setEditUser] = useState(null);
+  const [sortOrder, setSortOrder] = useState('asc');
+
+  const token = JSON.parse(sessionStorage.getItem('user'))?.token;
+  const itemsPerPage = 10;
+
+  const fetchUsers = async () => {
+    try {
+      let url = `/api/users?page=${currentPage}&limit=${itemsPerPage}&search=${searchTerm}&sort=${sortOrder}`;
+      if (userTypeFilter !== '') url += `&presence=${userTypeFilter}`;
+
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const json = await response.json();
+      setRequests(json.users || []);
+      setTotalPages(json.totalPages || 1);
+    } catch (err) {
+      console.error("Failed to fetch users", err);
+    }
+  };
+
+  useEffect(() => { fetchUsers(); }, [currentPage, searchTerm, sortOrder, userTypeFilter]);
 
   const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedItems(data.map(item => item.id));
-    } else {
-      setSelectedItems([]);
-    }
+    setSelectedItems(e.target.checked ? requests.map(item => item._id) : []);
   };
 
   const handleSelectItem = (id) => {
-    setSelectedItems(prev =>
-      prev.includes(id)
-        ? prev.filter(item => item !== id)
-        : [...prev, id]
-    );
+    setSelectedItems(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]);
   };
-  const handleEditClick = (row) => {
-    setEditData(row);
+
+  const handleDelete = async () => {
+    for (let id of selectedItems) {
+      await fetch(`/api/users/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    }
+    setSelectedItems([]);
+    fetchUsers();
+  };
+
+
+  const handleOverlaySubmit = async (data) => {
+    const method = editUser ? 'PATCH' : 'POST';
+    const url = editUser ? `/api/users/adminUpdate/${editUser._id}` : '/api/users/register';
+
+    const payload = {
+      ...data,
+      user_presence: Number(data.user_presence),
+      ...(editUser ? {} : { password_hash: data.password_hash || 'Default@123' })
+    };
+
+    await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    setShowOverlay(false);
+    setEditUser(null);
+    fetchUsers();
+  };
+
+  const openEditForm = (user) => {
+    setEditUser(user);
     setShowOverlay(true);
   };
 
-  useEffect(() => {
-    // Fetch data from API
-    fetchRequests();
-  }, [currentPage, searchTerm, startDate, endDate, selectedFilter]);
+  const toggleSortOrder = () => {
+    setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+  };
 
-  const fetchRequests = async () => {
-    try {
-      // Mock API call - replace with actual API endpoint
-      const response = await fetch(apiEndpoint);
-      const data = await response.json();
-      setRequests(data);
-    } catch (error) {
-      console.error('Error fetching requests:', error);
-    }
+  const downloadCSV = () => {
+    const header = ['User ID', 'Username', 'Email', 'Phone', 'User Type'];
+    const rows = requests.map(user => [user._id, user.username, user.email, user.phone_number, user.user_presence === 1 ? 'Admin' : 'User']);
+    const csv = [header, ...rows].map(row => row.join(",")).join("\n");
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'winerrors.csv';
+    a.click();
   };
 
   return (
@@ -93,55 +107,43 @@ const Header_Table = ({
       <div className={styles.header}>
         <h1 className={styles.title}>{title}</h1>
         <div className={styles.profile}>
-          <img src="https://dashboard.codeparrot.ai/api/image/Z9LSe5IdzXb5OlG8/rectangl.png" alt="Profile" className={styles.profileImg} />
-          <span className={styles.profileName}>{profileName}</span>
-          <img src="https://dashboard.codeparrot.ai/api/image/Z9LSe5IdzXb5OlG8/chevron.png" alt="Chevron" className={styles.chevron} />
-        </div>
+         <img src="https://dashboard.codeparrot.ai/api/image/Z9LSe5IdzXb5OlG8/rectangl.png" alt="Profile" className={styles.profileImg} />
+                   <span className={styles.profileName}>{profileName}</span>
+                   <img src="https://dashboard.codeparrot.ai/api/image/Z9LSe5IdzXb5OlG8/chevron.png" alt="Chevron" className={styles.chevron} />
+                </div>
       </div>
+
       <div className={sharedCss.innerDivArea}>
         <div className={styles.controls}>
-
-          <div className={styles.addButton}>
+          <div className={styles.addButton} onClick={() => { setEditUser(null); setShowOverlay(true); }}>
             <span>Add</span>
-            <img className={styles.addImg} src="https://dashboard.codeparrot.ai/api/image/Z9MAtCppvFKitUEH/image-90.png" alt="add" />
+                        <img className={styles.addImg} src="https://dashboard.codeparrot.ai/api/image/Z9MAtCppvFKitUEH/image-90.png" alt="add" />
+                      
           </div>
-
           <input
             type="text"
-            placeholder="Search the User by name or ID"
+            placeholder="Search by username, email, or phone"
             className={styles.searchInput}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-
-          <div className={styles.dateGroup}>
-            <span>Start Date:</span>
-            <input
-              type="date"
-              className={styles.dateInput}
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </div>
-
-          <div className={styles.dateGroup}>
-            <span>End Date:</span>
-            <input
-              type="date"
-              className={styles.dateInput}
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </div>
-
-          <button className={styles.downloadBtn}>
-            <span>Download</span>
-            <img src="https://dashboard.codeparrot.ai/api/image/Z9LSe5IdzXb5OlG8/group-33-5.png" alt="Download" />
+          <select className={styles.selectWrapper} value={userTypeFilter} onChange={(e) => setUserTypeFilter(e.target.value)}>
+            <option value="">All</option>
+            <option value="1">Admin</option>
+            <option value="0">User</option>
+          </select>
+          <button className={styles.downloadBtn} onClick={toggleSortOrder}>
+            Sort: {sortOrder === 'asc' ? 'Oldest' : 'Newest'}
           </button>
-
-          <button className={styles.deleteBtn}>
+          <button className={styles.deleteBtn} onClick={handleDelete} disabled={selectedItems.length === 0}>
             <span>Delete</span>
             <img src="https://dashboard.codeparrot.ai/api/image/Z9LSe5IdzXb5OlG8/group-33-6.png" alt="Delete" />
+          
+          </button>
+          <button className={styles.downloadBtn} onClick={downloadCSV}>
+             <span>Download</span>
+            <img src="https://dashboard.codeparrot.ai/api/image/Z9LSe5IdzXb5OlG8/group-33-5.png" alt="Download" />
+          
           </button>
         </div>
 
@@ -150,40 +152,30 @@ const Header_Table = ({
             <thead>
               <tr>
                 <th className={styles.checkboxCell}>
-                  <input
-                    type="checkbox"
-                    onChange={handleSelectAll}
-                    checked={selectedItems.length === data.length}
-                  />
+                  <input type="checkbox" onChange={handleSelectAll} checked={selectedItems.length === requests.length} />
                   <span>All</span>
                 </th>
                 <th>User ID</th>
-                <th>Join date</th>
-                <th>Name</th>
+                <th>Username</th>
                 <th>Email</th>
+                <th>Phone</th>
+                <th>User Type</th>
                 <th>Edit</th>
               </tr>
             </thead>
             <tbody>
-              {data.map(row => (
-                <tr key={row.id} className={selectedItems.includes(row.id) ? styles.selectedRow : ''}>
+              {requests.map(user => (
+                <tr key={user._id}>
                   <td className={styles.checkboxCell}>
-                    <input
-                      type="checkbox"
-                      checked={selectedItems.includes(row.id)}
-                      onChange={() => handleSelectItem(row.id)}
-                    />
+                    <input type="checkbox" checked={selectedItems.includes(user._id)} onChange={() => handleSelectItem(user._id)} />
                   </td>
-                  <td>{row.id}</td>
-                  <td>{row.date}</td>
-                  <td>{row.name}</td>
-                  <td>{row.email}</td>
+                  <td>{user._id}</td>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>{user.phone_number}</td>
+                  <td>{user.user_presence === 1 ? 'Admin' : 'User'}</td>
                   <td>
-                    <FaEdit
-                      className={styles.editIcon}
-                      onClick={() => handleEditClick(row)}
-                      style={{ cursor: 'pointer' }}
-                    />
+                    <FaEdit className={styles.editIcon} onClick={() => openEditForm(user)} />
                   </td>
                 </tr>
               ))}
@@ -192,50 +184,44 @@ const Header_Table = ({
         </div>
 
         <div className={styles.pagination}>
-          <button
-            className={styles.paginationBtn}
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-
+          <button className={styles.paginationBtn} onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>Previous</button>
           <div className={styles.pageNumbers}>
-            <span className={currentPage === 1 ? styles.active : ''}>1</span>
-            <span className={currentPage === 2 ? styles.active : ''}>2</span>
-            <span className={currentPage === 3 ? styles.active : ''}>3</span>
-            <span>...</span>
-            <span>7</span>
+          <span onClick={ () => {
+                const neededPage = parseInt(prompt("Please type the page you want to go to"));
+                if (isNaN(neededPage)){
+                    alert("Please write a number");
+                    return;
+                }
+                if (neededPage < 1 || neededPage > totalPages){
+                    alert(`Please keep the number between 1 and ${totalPages}`);
+                    return;
+                }
+                setCurrentPage(parseInt(neededPage));
+              }}>Page {currentPage} out of {totalPages}</span>
           </div>
-
-          <button
-            className={styles.paginationBtn}
-            onClick={() => setCurrentPage(p => p + 1)}
-          >
-            Next
-          </button>
-
-          <div className={styles.pageSelect}>
-            <span>{itemsPerPage}</span>
-            <img src="https://dashboard.codeparrot.ai/api/image/Z9LSe5IdzXb5OlG8/group-33-7.png" alt="Select" className={styles.pageSelectIcon} />
-          </div>
+          <button className={styles.paginationBtn} onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>Next</button>
         </div>
       </div>
+
       {showOverlay && (
-        <DynamicFormOverlay
+        <EditOverlay
+          title={editUser ? 'Edit Request' : 'Add Request'}
           fieldsJson={{
-            id: 'text',
-            date: 'text',
-            name: 'text',
-            email: 'text',
-            requests: '---'
+            username: 'text',
+            email: 'email',
+            phone_number: 'text',
+            ...(editUser ? {} : { password_hash: 'password' }),
+            user_presence: {
+              type: 'select',
+              options: [
+                { label: 'User', value: 0 },
+                { label: 'Admin', value: 1 }
+              ]
+            }
           }}
-          initialValues={editData}
+          initialValues={editUser || { user_presence: 0 }}
           onCancel={() => setShowOverlay(false)}
-          onSubmit={(formData) => {
-            console.log('Form submitted:', formData);
-            setShowOverlay(false);
-          }}
+          onSubmit={handleOverlaySubmit}
         />
       )}
     </div>

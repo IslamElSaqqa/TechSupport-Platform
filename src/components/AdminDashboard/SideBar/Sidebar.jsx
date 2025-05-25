@@ -43,7 +43,7 @@ const Sidebar = ({ className = '' }) => {
               onClick={() => handleNavigation('/accounting')}
             >
               <img src="https://dashboard.codeparrot.ai/api/image/Z9EZLCppvFKitT90/group-10.png" alt="Accounting" className={styles.icon} />
-              <span>Accounting</span>
+              <span>All Technicians</span>
             </div>
             
             <div

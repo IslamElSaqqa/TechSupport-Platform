@@ -12,7 +12,7 @@ export const useWindowsErrors = () => {
         setError(null);
 
         try {
-            const response = await fetch(`/api/WindowsError?code=${errorCode}`, {
+            const response = await fetch(`/api/WindowsError/search?code=${errorCode}`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -34,6 +34,7 @@ export const useWindowsErrors = () => {
             setIsLoading(false); 
         }
     };
+
 
     return { isLoading, error, getWindowsError};
 };

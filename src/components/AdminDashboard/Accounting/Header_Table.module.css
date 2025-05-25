@@ -72,20 +72,13 @@
   color: rgba(0, 0, 0, 0.33);
 }
 
-.divider {
-  width: 1px;
-  height: 31px;
-  background: #cbcbcb;
-  margin: 0 8px;
-}
-
 .selectIcon {
   width: 12px;
   height: 5.69px;
 }
 
 .searchInput {
-  width: 260px;
+  width: 300px;
   height: 48px;
   background: #ffffff;
   border: 0.5px solid #cbcbcb;
@@ -95,7 +88,7 @@
   color: rgba(0, 0, 0, 0.33);
 }
 
-.downloadBtn, .deleteBtn {
+.addButton, .downloadBtn, .deleteBtn {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -109,15 +102,14 @@
   cursor: pointer;
 }
 
-.downloadBtn {
-  width: 140px;
-  transition: 0.3s ease;
+.divider {
+  width: 1px;
+  height: 31px;
+  background: #cbcbcb;
 }
 
-.downloadBtn:hover
-{
-  background: #ffb030;
-  opacity: 0.8;
+.downloadBtn {
+  width: 140px;
 }
 
 .deleteBtn {
@@ -127,7 +119,7 @@
 
 .tableWrapper {
   margin-bottom: 32px;
-  overflow-x: auto;
+
 }
 
 .table {
@@ -287,4 +279,32 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+a {
+  text-decoration: none;
+}
+
+.dateGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+.dateInput {
+  height: 48px;
+  width: 120px;
+  padding: 0 16px;
+  border: 0.5px solid #CBCBCB;
+  border-radius: 10px;
+  background: #FFFFFF;
+  font-family: Montserrat, sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.addImg {
+  width: 50%;
+  height: 50%;
 }
