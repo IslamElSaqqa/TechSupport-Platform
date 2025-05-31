@@ -1,0 +1,524 @@
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+.typeButton {
+    padding: 0.3em 0.6em;
+    margin-left: 0.5em;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 0.3em;
+    cursor: pointer;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.typeButton:hover {
+background-color: #e1e1e1;
+}
+.typeOptions {
+display: flex;
+gap: 0.5em;
+}
+.typeButtonActive {
+background-color: orange;
+color: white;
+border-color: orange;
+}
+.topSection {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding-left: 5%;
+padding-right: 5%;
+background-color: #ffffff;
+flex: 1;
+}
+
+.textContent {
+background-color: #fcb32c;
+padding-left: 5%;
+height: 75%;
+width: 20%;
+border-radius: 15%;
+}
+
+.textContenth1 {
+font-size: 2rem;
+}
+
+.textContentp {
+font-size: 1rem;
+}
+
+.imageContentimg {
+max-width: 50%;
+height: auto;
+border-radius: 5em;
+margin: 10%;
+}
+
+.bottomSection {
+flex: 1;
+padding: 1.5em;
+background-color: rgba(255, 166, 0, 0.083);
+overflow-x: auto;
+}
+
+.filters {
+padding-left: 0.5%;
+display: flex;
+gap: 1em;
+margin: 0.5%;
+}
+
+.filtersButton {
+padding: 0.5em 1em;
+background-color: orange;
+color: white;
+border: none;
+border-radius: 1em;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+.filtersButton:hover {
+background-color: rgba(255, 166, 0, 0.729);
+}
+.fullWidthTable {
+width: 100%;
+table-layout: fixed;
+border-collapse: collapse;
+}
+.fullWidthTable {
+width: 100%;
+table-layout: fixed;
+border-collapse: collapse;
+}
+
+.tableContainer {
+width: 100%;
+border-collapse: collapse;
+border: 1px solid black;
+}
+
+.tableHeader {
+background-color: #ffa500;
+color: black;
+}
+
+.tableHeaderCell {
+border: 1px solid black;
+padding: 0.75em;
+text-align: left;
+}
+
+.tableRow {
+background-color: white;
+border: 1px solid black;
+}
+
+.tableCell {
+border: 1px solid black;
+padding: 0.75em;
+text-align: left;
+}
+
+.detailLink {
+color: #fcb32c;
+text-decoration: none;
+font-weight: bold;
+}
+
+.detailLink:hover {
+text-decoration: underline;
+}
+
+.requestDetails {
+background-color: #fff;
+padding: 1.5em;
+border-radius: 0.5em;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.requestDetails h3 {
+font-size: 1.5rem;
+margin-bottom: 1em;
+color: #333;
+}
+
+.detailItem {
+margin-bottom: 1em;
+padding-bottom: 0.5em;
+border-bottom: 1px solid #eee;
+}
+
+.detailActionsTop {
+display: flex;
+gap: 1em;
+margin-bottom: 1em;
+}
+
+.backButton {
+padding: 0.5em 1em;
+background-color: orange;
+color: white;
+border: none;
+border-radius: 0.5em;
+cursor: pointer;
+}
+
+.backButton:hover {
+background-color: rgba(255, 166, 0, 0.729);
+}
+
+.addNoteButton {
+padding: 0.5em 1em;
+background-color: #4CAF50;
+color: white;
+border: none;
+border-radius: 0.5em;
+cursor: pointer;
+}
+
+.addNoteButton:hover {
+background-color: #45a049;
+}
+
+.dropdown {
+position: relative;
+display: inline-block;
+}
+
+.dropdownToggle {
+padding: 0.5em 1em;
+background-color: orange;
+color: white;
+border: none;
+border-radius: 1em;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+.dropdownToggle:hover {
+background-color: rgba(255, 166, 0, 0.729);
+}
+
+.dropdownMenu {
+position: absolute;
+background-color: white;
+min-width: 160px;
+box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+z-index: 1;
+border-radius: 0.5em;
+overflow: hidden;
+}
+
+.dropdownMenuButton {
+width: 100%;
+padding: 0.75em 1em;
+text-align: left;
+background: none;
+border: none;
+cursor: pointer;
+color: #333;
+}
+
+.dropdownMenuButton:hover {
+background-color: #f1f1f1;
+}
+
+.actionButtons {
+display: flex;
+gap: 0.5em;
+}
+
+.acceptButton {
+background-color: #4CAF50;
+color: white;
+border: none;
+padding: 0.3em 0.6em;
+border-radius: 0.3em;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+.acceptButton:hover {
+background-color: #45a049;
+}
+
+.rejectButton {
+background-color: #f44336;
+color: white;
+border: none;
+padding: 0.3em 0.6em;
+border-radius: 0.3em;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+.rejectButton:hover {
+background-color: #d32f2f;
+}
+
+.resetButton {
+background-color: orange;
+color: white;
+border: none;
+padding: 0.3em 0.6em;
+border-radius: 0.3em;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+.resetButton:hover {
+background-color: #e65100;
+}
+
+.detailActions {
+margin-top: 1em;
+display: flex;
+gap: 1em;
+}
+
+.detailActions button {
+padding: 0.5em 1em;
+border-radius: 0.5em;
+}
+
+.statusBadge {
+padding: 0.3em 0.6em;
+border-radius: 1em;
+font-size: 0.9em;
+font-weight: bold;
+}
+
+.statusBadgePending {
+background-color: #ff9800;
+color: white;
+}
+
+.statusBadgeAccepted {
+background-color: #4caf50;
+color: white;
+}
+
+.statusBadgeRejected {
+background-color: #f44336;
+color: white;
+}
+
+.activeFilter {
+background-color: #e65100;
+font-weight: bold;
+}
+
+.notesContainer {
+margin-top: 10px;
+border: 1px solid #eee;
+border-radius: 5px;
+padding: 10px;
+background-color: #f9f9f9;
+}
+
+.noteItem {
+margin-bottom: 10px;
+padding-bottom: 10px;
+border-bottom: 1px solid #ddd;
+}
+
+.noteItem:last-child {
+border-bottom: none;
+margin-bottom: 0;
+padding-bottom: 0;
+}
+
+.noteDate {
+font-size: 0.8em;
+color: #666;
+margin-bottom: 5px;
+}
+
+.noteText {
+padding: 5px;
+background-color: white;
+border-radius: 3px;
+}
+
+.attachmentsContainer {
+display: flex;
+gap: 10px;
+margin-top: 10px;
+}
+
+.attachmentsContainer img {
+width: 150px;
+height: 150px;
+border-radius: 8px;
+object-fit: cover;
+}
+
+.notePopupOverlay {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: rgba(0, 0, 0, 0.5);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 1000;
+}
+
+.notePopup {
+background-color: white;
+padding: 20px;
+border-radius: 8px;
+width: 400px;
+max-width: 90%;
+}
+
+.notePopup h3 {
+margin-top: 0;
+color: #333;
+}
+
+.notePopup textarea {
+width: 100%;
+height: 150px;
+margin: 15px 0;
+padding: 10px;
+border: 1px solid #ddd;
+border-radius: 4px;
+resize: vertical;
+}
+
+.notePopupButtons {
+display: flex;
+justify-content: flex-end;
+gap: 10px;
+}
+
+.submitNoteButton {
+padding: 8px 16px;
+background-color: #4CAF50;
+color: white;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+}
+
+.submitNoteButton:hover {
+background-color: #45a049;
+}
+
+.cancelNoteButton {
+padding: 8px 16px;
+background-color: #f44336;
+color: white;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+}
+
+.cancelNoteButton:hover {
+background-color: #d32f2f;
+}
+
+.paginationControls {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 1em;
+margin-top: 1em;
+}
+
+.paginationControls button {
+padding: 0.5em 1em;
+background-color: orange;
+color: white;
+border: none;
+border-radius: 0.5em;
+cursor: pointer;
+}
+
+.paginationControls button:disabled {
+background-color: #ccc;
+cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+.topSection {
+    flex-direction: column;
+    text-align: center;
+}
+
+.textContent {
+    width: 80%;
+    margin-bottom: 1em;
+}
+
+.imageContent img {
+    width: 80%;
+}
+
+.filters {
+    flex-direction: column;
+}
+
+.filtersButton {
+    width: 100%;
+}
+
+.tableContainer {
+    font-size: 0.9rem;
+}
+
+.actionButtons {
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.detailActionsTop {
+    flex-direction: column;
+}
+
+.attachmentsContainer {
+    flex-direction: column;
+}
+
+.attachmentsContainer img {
+    width: 100%;
+    height: auto;
+}
+}
+
+@media (max-width: 480px) {
+.topSection {
+    padding: 1em;
+}
+
+.bottomSection {
+    padding: 1em;
+}
+
+.filtersButton {
+    padding: 0.5em;
+}
+
+
+.tableHeaderCell,
+.tableCell {
+    padding: 0.5em;
+}
+
+.dropdownMenu {
+    min-width: 120px;
+}
+
+
+
+}

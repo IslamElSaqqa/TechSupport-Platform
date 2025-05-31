@@ -9,6 +9,8 @@ export const techReducer = (state, action) => {
             return { technician: action.payload }
         case 'LOGOUT':
             return { technician: null }
+        case 'GET_PROFILE':
+            return {technician: action.payload}
         default:
             return state
     }
@@ -19,6 +21,11 @@ export const TechnicianContextProvider = ({ children }) => {
         { technician: null })
     
     console.log('context state: ', state)
+    useEffect(() => {
+        const technician = JSON.parse(sessionStorage.getItem('Technician'))
+        dispatch({type: 'LOGIN', payload: technician})
+    }, [])
+
 
 
     return (
