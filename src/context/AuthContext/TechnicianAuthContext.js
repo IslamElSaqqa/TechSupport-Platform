@@ -1,5 +1,5 @@
 
-import { createContext, useReducer, useEffect } from 'react'
+import { createContext, useReducer, useEffect, useState } from 'react'
 
 // Create an AuthContext instance from createContext
 export const TechnicianAuthContext = createContext()
@@ -19,13 +19,18 @@ export const techReducer = (state, action) => {
 export const TechnicianContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(techReducer,
         { technician: null })
+        const [loading, setLoading] = useState(true); 
+    
     
     console.log('context state: ', state)
     useEffect(() => {
         const technician = JSON.parse(sessionStorage.getItem('Technician'))
-        dispatch({type: 'LOGIN', payload: technician})
+        if(technician)
+            dispatch({ type: 'LOGIN', payload: technician })
+        setLoading(false);
     }, [])
-
+    
+    if (loading) return null;
 
 
     return (

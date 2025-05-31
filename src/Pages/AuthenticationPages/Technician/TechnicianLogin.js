@@ -1,16 +1,35 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTechnicianLogin } from '../../../Hooks/Technician/useTechnicianLogin';
+import { useTechnicianContext } from '../../../Hooks/Technician/useTechnicianContext';
 const TechnicianLogin = () => {
-
       // defining Technician Login entries using useState
         const [password, setPassword] = useState('')
         const [email, setEmail] = useState("");
     
         const navigate = useNavigate(); 
 
+
+    // preventing multiple technician login
+    useEffect(() => {
+    const storedTechnician = sessionStorage.getItem('Technician');
+    if (storedTechnician) {
+        try {
+        const parsedTech = JSON.parse(storedTechnician);
+            if (parsedTech.token) {
+                navigate('/tech', { replace: true });
+            }
+        } catch (err) {
+        console.error('Error parsing technician data:', err);
+        }
+        sessionStorage.removeItem('Technician');
+    }
+    }, [navigate]);
+
+    
+    
     
         // Destructuring login func, error and isLoading States
         const { error, isLoading, technicianLogin} = useTechnicianLogin()
@@ -25,7 +44,7 @@ const TechnicianLogin = () => {
             if (successLogin) {
                 toast.success(`Welcome ${email}`, {
                         position: 'top-right',
-                        autoClose: 2000,
+                        autoClose: 1500,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: false,
@@ -33,7 +52,7 @@ const TechnicianLogin = () => {
                 });
                 setTimeout(() => {
                         navigate('/tech');
-                    }, 2100);
+                    }, 2000);
             }
         };
     return (

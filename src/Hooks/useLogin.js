@@ -26,7 +26,7 @@ export const useLogin =  () => {
             setIsLoading(false)
             setError(json.error)
             // return false to indicate that there is an error in the response
-            return false;
+            return false
         }
 
         if (response.ok) { 
@@ -47,7 +47,7 @@ export const useLogin =  () => {
                 payload: normalizedUser
             })
                 setIsLoading(false);
-                return true
+                return normalizedUser
 
         }
     }

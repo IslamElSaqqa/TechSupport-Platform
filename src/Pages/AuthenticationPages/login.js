@@ -1,9 +1,8 @@
-import { React, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useLogin } from '../../Hooks/useLogin';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useAuthContext } from "../../Hooks/useAuthContext"
 
 const Login = () => {
 
@@ -16,6 +15,31 @@ const Login = () => {
         const navigate = useNavigate(); 
 
 
+        // preventing logged in users from loggin in again after being login
+        useEffect(() => {
+            const storedUser = sessionStorage.getItem('user');
+            if (storedUser) {
+                try {
+                    const parsedUser = JSON.parse(storedUser);
+                    const base64Url = parsedUser.token.split('.')[1];
+                    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    const decodedPayload = JSON.parse(window.atob(base64));
+                    const userPresence = decodedPayload.user_presence;
+
+                    if (userPresence === 1) {
+                        navigate('/Dashboard', { replace: true });
+                    } else {
+                        navigate('/home', { replace: true });
+                    }
+                } catch (err) {
+                    console.error('Error decoding token on mount:', err);
+                    // If token is invalid, clear session and stay on login page
+                    sessionStorage.removeItem('user');
+                }
+            }
+        }, [navigate]);
+        
+    
         const checkInputIdentifier = (value) => {
             const phoneRegex = /^(010|011|012|015)\d{8}$/;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,51 +59,45 @@ const Login = () => {
         // Destructuring login func, error and isLoading States
         const { error, isLoading, login } = useLogin()
     
-        // HandleSubmit
-        const handleSubmit = async (e) => {
+    
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const result = await login(inputValue, password);
 
-            if (result) {
-                toast.success(`Logged in successfully!\nWelcome ${inputValue}`, {
-                    position: 'top-right',
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: true,
-                    
-                });
+        if (result && result.token) {
+            toast.success(`Logged in successfully!\nWelcome ${inputValue}`, {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+            });
 
-                setTimeout(() => { 
-                    navigate('/home')
-                }, 3200) 
-                
-            }   
-    };
-    const { user } = useAuthContext()
+            // Decode token to extract user_presence
+            try {
+                // Re-read user from sessionStorage
+                const storedUser = JSON.parse(sessionStorage.getItem('user'));
+                const base64Url = storedUser.token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const decodedPayload = JSON.parse(window.atob(base64));
+                const userPresence = decodedPayload.user_presence;
+                console.log("userPresence= " + userPresence);
 
-    // prevent repetitive login when user is already logged in!
-    // useEffect(() => {
-    // if (user?.token) {
-    //     try {
-    //     const base64Url = user.token.split('.')[1];
-    //     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    //     const decodedPayload = JSON.parse(window.atob(base64));
-    //     const userPresence = decodedPayload.user_presence;
-
-    //     if (userPresence === 1) {
-    //         navigate('/Dashboard');
-    //     } else {
-    //         navigate('/home');
-    //     }
-    //     } catch (err) {
-    //     console.error('Error decoding token', err);
-    //     sessionStorage.removeItem('user');
-    //     }
-    // }
-    // }, [user, navigate]);
+                setTimeout(() => {
+                    if (userPresence === 1) {
+                        navigate('/Dashboard');
+                    } else {
+                        navigate('/home');
+                    }
+                }, 3200);
+            } catch (error) {
+                console.error("Failed to decode token:", error);
+                toast.error("Login failed. Please try again.");
+            }
+        };
+    }
 
     return (
         <div className="content-container">
@@ -135,5 +153,4 @@ const Login = () => {
         </div>
     );
 };
-
 export default Login;

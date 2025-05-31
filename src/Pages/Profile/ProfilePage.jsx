@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useGetProfile } from '../../Hooks/usegetProfile';
 import { useAuthContext } from '../../Hooks/useAuthContext';
 import { useUpdateProfile } from '../../Hooks/useUpdateProfile';

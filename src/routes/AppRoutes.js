@@ -1,4 +1,6 @@
 import { Routes, Route } from "react-router-dom";
+
+// Public Pages & Components
 import Layout from "../components/Layout/layout";
 import Login from "../Pages/AuthenticationPages/login";
 import SignUp from "../Pages/AuthenticationPages/signup";
@@ -6,10 +8,7 @@ import TroubleLogin from "../Pages/AuthenticationPages/troubleLogin";
 import ForgetPass from "../Pages/AuthenticationPages/forgotPassword";
 import NewPassword from "../Pages/AuthenticationPages/newPassword";
 import PassChanged from "../Pages/AuthenticationPages/passChanged";
-import MaintenanceStores from "../components/Home_Components/MaintenanceStores";
 import Home from "../Pages/Home";
-import Header from "../components/header&footer/header";
-import Footer from "../components/header&footer/footer";
 import WindowsErrors1 from "../components/Windows_Errors/WindowsErrors1";
 import WindowsErrors2 from "../components/Windows_Errors/WindowsErrors2";
 import RepairShops from "../Pages/RepairShop";
@@ -18,94 +17,122 @@ import Store from "../Pages/Store/Store";
 import StoreCategories from "../Pages/Store/Store Categories";
 import OnlineServicing from "../Pages/OnlineServicing/OnlineServicing";
 import RequestSuccess from "../Pages/OnlineServicing/RequestSuccess";
-import ProfilePage from "../Pages/Profile/ProfilePage";
 import ContactUs from "../components/header&footer/Footer Links/ContactUs";
 import PrivacyPolicy from "../components/header&footer/Footer Links/PrivacyPolicy";
 import AboutUs from "../Pages/About Us/AboutUs";
-import Error404 from "../Pages/Error404";
 import TechnicianLogin from "../Pages/AuthenticationPages/Technician/TechnicianLogin";
+import Error404 from "../Pages/Error404";
+
+// Header & Footer
+import Header from "../components/header&footer/header";
+import Footer from "../components/header&footer/footer";
+
+// Protected Pages
+import ProfilePage from "../Pages/Profile/ProfilePage";
 import Technician from "../Pages/Technician/Technician";
 
-// Admin dashboard pages
-import ServicesRequests from '../components/AdminDashboard/ServiceRequests/ServicesRequests';
-import Accounting from '../components/AdminDashboard/Accounting/Accounting';
-import Users from '../components/AdminDashboard/Users/Users';
-import AdminRepairShops from '../components/AdminDashboard/RepairShops/RepairShops';
-import WinErrors from '../components/AdminDashboard/WinErrors/WinErrors';
-import DashboardLayout from '../components/AdminDashboard/DashBoard/DashboardLayout';
+// Admin Dashboard Pages
+import ServicesRequests from "../components/AdminDashboard/ServiceRequests/ServicesRequests";
+import Accounting from "../components/AdminDashboard/Accounting/Accounting";
+import Users from "../components/AdminDashboard/Users/Users";
+import AdminRepairShops from "../components/AdminDashboard/RepairShops/RepairShops";
+import WinErrors from "../components/AdminDashboard/WinErrors/WinErrors";
+import DashboardLayout from "../components/AdminDashboard/DashBoard/DashboardLayout";
 
-// Protected Route
-import ProtectedRoute from "../utils/ProtectedRoute";
+// Misc
+import MaintenanceStores from "../components/Home_Components/MaintenanceStores";
 
-// Helper for routes with header and footer
-const RouteWithHeaderFooter = ({ element }) => (
+// Route Guards
+import UserProtectedRoute from "../utils/UserProtectedRoute";
+import TechnicianProtectedRoute from "../utils/TechnicianProtectedRoute";
+
+// Wrapper for header/footer
+const WithHeaderFooter = ({ children }) => (
     <>
         <Header />
-        {element}
+        {children}
         <Footer />
     </>
-);
-
-const AppRoutes = () => {
-    return (
-        <Routes>
-        <Route path="/" element={<RouteWithHeaderFooter element={<Layout />} />} />
-        <Route path="/login" element={<RouteWithHeaderFooter element={<Login />} />} />
-        <Route path="/signup" element={<RouteWithHeaderFooter element={<SignUp />} />} />
-        <Route path="/trouble-login" element={<RouteWithHeaderFooter element={<TroubleLogin />} />} />
-        <Route path="/ForgetPass" element={<RouteWithHeaderFooter element={<ForgetPass />} />} />
-        <Route path="/newPassword" element={<RouteWithHeaderFooter element={<NewPassword />} />} />
-        <Route path="/pass-changed" element={<RouteWithHeaderFooter element={<PassChanged />} />} />
-        <Route path="/home" element={<RouteWithHeaderFooter element={<Home />} />} />
-        <Route path="/maintenance-stores" element={<MaintenanceStores />} />
-        <Route path="/windows-errors1" element={<RouteWithHeaderFooter element={<WindowsErrors1 />} />} />
-        <Route path="/windows-errors2" element={<RouteWithHeaderFooter element={<WindowsErrors2 />} />} />
-        <Route path="/repair-shops" element={<RouteWithHeaderFooter element={<RepairShops />} />} />
-        <Route path="/Community" element={<RouteWithHeaderFooter element={<Community />} />} />
-        <Route path="/store" element={<RouteWithHeaderFooter element={<Store />} />} />
-        <Route path="/store-categories" element={<RouteWithHeaderFooter element={<StoreCategories />} />} />
-        <Route path="/online-servicing" element={<RouteWithHeaderFooter element={<OnlineServicing />} />} />
-        <Route path="/online-servicing/request-success" element={<RouteWithHeaderFooter element={<RequestSuccess />} />} />
-        
-        <Route path="/profile-page" element={
-            <RouteWithHeaderFooter element={<ProfilePage />} />
-            }
-            />
-            
-
-        <Route path="/tech" element={
-            <RouteWithHeaderFooter element={<Technician />} />
-            }
-            />
-        <Route path="/contact-us" element={<RouteWithHeaderFooter element={<ContactUs />} />} />
-        <Route path="/privacy-policy" element={<RouteWithHeaderFooter element={<PrivacyPolicy />} />} />
-        <Route path="/about-us" element={<RouteWithHeaderFooter element={<AboutUs />} />} />
-        <Route path="/technician-login" element={<RouteWithHeaderFooter element={<TechnicianLogin />} />} />
-
-        {/* Admin-Only Protected Routes */}
-        <Route path="/Dashboard" element={
-            <DashboardLayout />
-        } />
-        <Route path="/servicing" element={
-            <ServicesRequests />
-        } />
-        <Route path="/accounting" element={
-            <Accounting />
-        } />
-        <Route path="/users" element={
-            <Users />
-        } />
-        <Route path="/admin-repairshops" element={
-            <AdminRepairShops />
-        } />
-        <Route path="/winerrors" element={
-            <WinErrors />
-        } />
-
-        {/* Catch-all 404 */}
-        <Route path="*" element={<RouteWithHeaderFooter element={<Error404 />} />} />
-        </Routes>
     );
-};
+
+    const PublicRoute = ({ element }) => <WithHeaderFooter>{element}</WithHeaderFooter>;
+
+    const publicRoutes = [
+    { path: "/", element: <Layout /> },
+    { path: "/login", element: <Login /> },
+    { path: "/signup", element: <SignUp /> },
+    { path: "/trouble-login", element: <TroubleLogin /> },
+    { path: "/ForgetPass", element: <ForgetPass /> },
+    { path: "/newPassword", element: <NewPassword /> },
+    { path: "/pass-changed", element: <PassChanged /> },
+    { path: "/home", element: <Home /> },
+    { path: "/windows-errors1", element: <WindowsErrors1 /> },
+    { path: "/windows-errors2", element: <WindowsErrors2 /> },
+    { path: "/repair-shops", element: <RepairShops /> },
+    { path: "/Community", element: <Community /> },
+    { path: "/store", element: <Store /> },
+    { path: "/store-categories", element: <StoreCategories /> },
+    { path: "/online-servicing", element: <OnlineServicing /> },
+    { path: "/online-servicing/request-success", element: <RequestSuccess /> },
+    { path: "/contact-us", element: <ContactUs /> },
+    { path: "/privacy-policy", element: <PrivacyPolicy /> },
+    { path: "/about-us", element: <AboutUs /> },
+    { path: "/technician-login", element: <TechnicianLogin /> },
+    ];
+
+    const adminRoutes = [
+    { path: "/Dashboard", element: <DashboardLayout /> },
+    { path: "/servicing", element: <ServicesRequests /> },
+    { path: "/accounting", element: <Accounting /> },
+    { path: "/users", element: <Users /> },
+    { path: "/admin-repairshops", element: <AdminRepairShops /> },
+    { path: "/winerrors", element: <WinErrors /> },
+    ];
+
+    const AppRoutes = () => (
+    <Routes>
+        {/* Public routes with header/footer */}
+        {publicRoutes.map(({ path, element }) => (
+        <Route key={path} path={path} element={<PublicRoute element={element} />} />
+        ))}
+
+        {/* Special route without wrapper */}
+        <Route path="/maintenance-stores" element={<MaintenanceStores />} />
+
+        {/* User protected route (any logged-in user) */}
+        <Route
+        path="/profile-page"
+        element={
+            <UserProtectedRoute>
+            <WithHeaderFooter>
+                <ProfilePage />
+            </WithHeaderFooter>
+            </UserProtectedRoute>
+        }
+        />
+
+        <Route
+        path="/tech"
+                element={<PublicRoute element={<TechnicianProtectedRoute>
+                    <Technician />
+                </TechnicianProtectedRoute>} />
+        }
+        />
+
+        {adminRoutes.map(({ path, element }) => (
+        <Route
+            key={path}
+            path={path}
+            element={
+            <UserProtectedRoute requiredPresence={1}>
+                {element}
+            </UserProtectedRoute>
+            }
+        />
+        ))}
+
+        <Route path="*" element={<PublicRoute element={<Error404 />} />} />
+    </Routes>
+);
 
 export default AppRoutes;
