@@ -34,13 +34,15 @@ export const useUpdateProfile =  () => {
 
         if (response.ok) { 
             
-            // update auth context using dispatch from useReducer
-            const userData = json.updatedUser;
-            console.log(userData)
-            setUpdateLoading(false); 
+            // Merge new data with existing user
+            const updatedUser = { ...user, ...json.updatedUser };
+            sessionStorage.setItem("user", JSON.stringify(updatedUser));
 
-            dispatch({ type: 'UPDATE_PROFILE', payload: { ...userData } })
-            return userData;
+            // Dispatch merged user
+            dispatch({ type: "UPDATE_PROFILE", payload: json.updatedUser });
+
+            setUpdateLoading(false);
+            return json.updatedUser;
         }
             
     }

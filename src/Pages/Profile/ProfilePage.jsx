@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGetProfile } from '../../Hooks/usegetProfile';
 import { useAuthContext } from '../../Hooks/useAuthContext';
 import { useUpdateProfile } from '../../Hooks/useUpdateProfile';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import styles from './Profile.module.css';
 
 const ProfilePage = () => {
   const [username, setUsername] = useState('');
@@ -12,10 +13,15 @@ const ProfilePage = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [profileImage, setProfileImage] = useState('')
   const [initialData, setInitialData] = useState(null);
   const { user } = useAuthContext();  
   const { isLoading, error, getProfile } = useGetProfile(); 
   const { updateLoading, UpdateError, updateProfile } = useUpdateProfile()
+  const [imageUploading, setImageUploading] = useState(false);
+
+  const fileInputRef = useRef();
+
 
   // Flag to ensure the profile fetch happens only once
   const [profileFetched, setProfileFetched] = useState(false);
@@ -36,10 +42,12 @@ const ProfilePage = () => {
         setUsername(profile.username || '');
         setEmail(profile.email || '');
         setPhone(profile.phone_number || '');
+        setProfileImage(profile.profile_image || '')
         setInitialData({
           username: profile.username || '',
           email: profile.email || '',
           phone: profile.phone_number || '',
+          profileImage: profile.profile_image || "https://res.cloudinary.com/dr9yx1tod/image/upload/v1748907333/gnxjl4smryaxenstarj8.jpg"
         });
         setProfileFetched(true);  // Mark as fetched
       }
@@ -53,6 +61,7 @@ const ProfilePage = () => {
       setUsername(initialData.username);
       setEmail(initialData.email);
       setPhone(initialData.phone);
+      setProfileImage(initialData.profileImage)
       setCurrentPassword('');
       setNewPassword('');
       setConfirmNewPassword('');
@@ -70,7 +79,9 @@ const ProfilePage = () => {
       currentPassword,
       newPassword,
       confirmPassword: confirmNewPassword
-    })
+    }),
+    ...(profileImage !== initialData.profileImage && { profile_image: profileImage}),
+
   };
 
   // Always include email so backend can identify user even if unchanged
@@ -105,6 +116,69 @@ const ProfilePage = () => {
     }
   };
 
+  const handleEditImage = () => { 
+    fileInputRef.current.click();
+    console.log("Edited")
+  }
+
+  // handle File Change
+const handleFileChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('profile-image', file);
+  setImageUploading(true); // Start spinner
+
+  try {
+    // Upload image to Cloudinary
+    const response = await fetch('/api/users/upload/profile-image', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Upload failed');
+    }
+
+    if (data?.imageUrl) {
+      // Update image in DB
+      const updateResponse = await fetch(`/api/users/profile-image/${user._id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ profile_image: data.imageUrl }),
+      });
+
+      const updateData = await updateResponse.json();
+
+      if (!updateResponse.ok) {
+        throw new Error(updateData.error || 'Failed to update DB');
+      }
+
+      setProfileImage(data.imageUrl);
+      toast.success('Profile image updated!');
+      setInitialData((prev) => ({
+        ...prev,
+        profileImage: data.imageUrl,
+      }));
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error("Image upload or update failed");
+  } finally {
+    setImageUploading(false); // Stop spinner
+  }
+};
+
+
   return (
     <div className="content-container">
                 <ToastContainer />
@@ -112,6 +186,37 @@ const ProfilePage = () => {
         <h2 className="sidebar-title">Manage My Account</h2>
         <div className="sidebar-section">
           <span className="sidebar-link active">My Profile</span>
+        </div>
+        <div className={styles.avatarContainer}>
+          {isLoading || imageUploading ? (
+            // <p>Loading profile...</p>
+            <div className="spinner-container">
+              <div className="spinner"></div>
+            </div>) : (
+            <img
+              src={profileImage}
+              alt="user Image"
+              className={styles.avatarImage}
+            />
+          )}
+
+          <button
+            className={styles.editButton}
+            onClick={handleEditImage}
+            title="Edit Profile Picture"
+          >
+          ✏️
+          </button>
+          
+          <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+          />
+
+          
         </div>
       </div>
 

@@ -45,7 +45,11 @@ export const useAddComment = () => {
                 type: 'ADD_COMMENT',
                 payload: {
                     postId,
-                    comment: json.comment
+                    // updated
+                    comment: {
+                        ...json.comment,
+                        profile_image: user.profile_image,
+                    }
                 }
             });
             return true

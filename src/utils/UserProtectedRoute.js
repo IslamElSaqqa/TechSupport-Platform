@@ -4,7 +4,9 @@ import { toast } from "react-toastify";
 
 
 const UserProtectedRoute = ({ children, requiredPresence = null }) => {
-    const { user } = useAuthContext();
+    const { user, loading } = useAuthContext();
+
+    if (!loading) return null;
 
     // If user is not logged in
     if (!user || !user.token) {

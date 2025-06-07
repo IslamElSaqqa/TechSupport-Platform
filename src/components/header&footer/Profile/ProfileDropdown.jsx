@@ -51,8 +51,8 @@ function ProfileDropdown() {
     <div className="dropdown-container" ref={dropdownRef}>
       <div className="profile-icon" onClick={toggleDropdown}>
         <img
-          src="https://res.cloudinary.com/dr9yx1tod/image/upload/v1748886234/ivrbbqhag7lp8l9bfmkv.png"
-          alt=""
+          src={ user?.profile_image || "https://res.cloudinary.com/dr9yx1tod/image/upload/v1748886234/ivrbbqhag7lp8l9bfmkv.png"}
+          alt="Profile-icon"
           className="icon-community-profile"
         />
       </div>

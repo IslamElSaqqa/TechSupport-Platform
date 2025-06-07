@@ -321,7 +321,7 @@ const fetchCommentsForPost = async (postId, page = 1, limit = 3) => {
             <div className="top">
               <div className="user-text">
                 <img
-                  src="https://res.cloudinary.com/dr9yx1tod/image/upload/v1748886234/ivrbbqhag7lp8l9bfmkv.png"
+                  src={user?.profile_image|| "https://res.cloudinary.com/dr9yx1tod/image/upload/v1748886234/ivrbbqhag7lp8l9bfmkv.png"}
                   alt="Avatar"
                   className="avatar"
                 />
@@ -425,7 +425,7 @@ const fetchCommentsForPost = async (postId, page = 1, limit = 3) => {
                   <div className="user-info">
                     <img
                       src={
-                        post.user.avatar ||
+                        post.user?.profile_image ||
                         "https://res.cloudinary.com/dr9yx1tod/image/upload/v1748886234/ivrbbqhag7lp8l9bfmkv.png"
                       }
                       alt="User avatar"
@@ -433,7 +433,7 @@ const fetchCommentsForPost = async (postId, page = 1, limit = 3) => {
                     />
                     <div className="user-details">
                       <h3 className="username-community">
-                        {post.user.username || "Unknown User"}
+                        {post.user?.username || "Unknown User"}
                       </h3>
                     </div>
                   </div>
@@ -544,7 +544,7 @@ const fetchCommentsForPost = async (postId, page = 1, limit = 3) => {
                             <img
                               src={
                                 // Use a default avatar as API doesn't return one
-                                "https://res.cloudinary.com/dr9yx1tod/image/upload/v1748886234/ivrbbqhag7lp8l9bfmkv.png"
+                                comment.profile_image || "https://res.cloudinary.com/dr9yx1tod/image/upload/v1748886234/ivrbbqhag7lp8l9bfmkv.png"
                               }
                               alt="User avatar"
                               className="avatar"
@@ -570,7 +570,7 @@ const fetchCommentsForPost = async (postId, page = 1, limit = 3) => {
 
                 <div className="post-comment">
                   <img
-                    src="https://res.cloudinary.com/dr9yx1tod/image/upload/v1748886234/ivrbbqhag7lp8l9bfmkv.png"
+                    src={post.user.profile_image ||"https://res.cloudinary.com/dr9yx1tod/image/upload/v1748886234/ivrbbqhag7lp8l9bfmkv.png"}
                     alt="User avatar"
                     className="avatar"
                   />

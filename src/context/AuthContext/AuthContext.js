@@ -16,7 +16,7 @@ export const authReducer = (state, action) => {
         case 'RESET_PASSWORD':
             return { user: action.payload }
         case 'UPDATE_PROFILE':
-            return { user: action.payload }
+            return { user: { ...state.user, ...action.payload } };
         case 'GET_PROFILE':
             return {user: action.payload}
         default:
@@ -29,7 +29,7 @@ export const authReducer = (state, action) => {
 export const AuthContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(authReducer,
         { user: null })
-        const [loading, setLoading] = useState(true); 
+        const [loading, setLoading] = useState(false); 
 
     console.log('context state: ', state)
     useEffect(() => {
@@ -37,14 +37,12 @@ export const AuthContextProvider = ({ children }) => {
         if (user) {
             dispatch({ type: 'LOGIN', payload: user });
         }
-        setLoading(false);
+        setLoading(true);
     }, []);
-
-    if (loading) return null;
 
     return (
         // passing props to the provider to wrap 
-        <AuthContext.Provider value={{ ...state, dispatch }}>
+        <AuthContext.Provider value={{ ...state, dispatch, loading }}>
             { children}
         </AuthContext.Provider>
     )
