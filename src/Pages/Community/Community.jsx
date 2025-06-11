@@ -274,7 +274,10 @@ const Community = () => {
         position: 'top-right',
         autoClose: 1000,
       });
-      setTimeout(() => { window.location.reload(); }, 1500)
+
+        setEditingPostId(null);
+        setEditedContent('');
+      // setTimeout(() => { window.location.reload(); }, 1500)
 
     } else {
       toast.error('Failed to update post', {

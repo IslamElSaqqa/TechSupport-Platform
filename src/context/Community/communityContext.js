@@ -22,14 +22,28 @@ export const communityReducer = (state, action) => {
                 ...state,
                 posts: state.posts.filter((p)=> p._id !== action.payload._id)
             }
+        // case 'UPDATE_POST':
+        //     return {
+        //         ...state,
+        //         posts: state.posts.map((post) =>
+        //         post._id === action.payload.postId
+        //             ? { ...post, content: action.payload.content } : post
+        // ),
+        //     };
         case 'UPDATE_POST':
             return {
                 ...state,
-                posts: state.posts.map((post) =>
-                post._id === action.payload.postId
-                    ? { ...post, content: action.payload.content } : post
-        ),
-            };
+                posts: state.posts.map(post => 
+                post._id === action.payload.postId 
+                    ? { 
+                        ...post, 
+                        content: action.payload.content,
+                        is_edited: true,
+                        updated_at: new Date().toISOString()
+                    }
+                    : post
+                )
+            }
         case 'LIKE_POST':
             return {
                 ...state,
