@@ -449,9 +449,9 @@ const updateHelpSessionWithTechnician = async (req, res) => {
         const technicianId = req.specialist._id;
 
         // Validate status
-        const validStatuses = ["accepted", "rejected"];
+        const validStatuses = ["accepted", "rejected", "completed"];
         if (!validStatuses.includes(status)) {
-            return res.status(400).json({ error: "Invalid status. Must be 'accepted' or 'rejected'" });
+            return res.status(400).json({ error: "Invalid status. Must be 'accepted', 'rejected' or 'completed'" });
         }
 
         // Find the session

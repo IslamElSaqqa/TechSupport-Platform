@@ -3,6 +3,73 @@ const User = require('../models/userModel')
 const cloudinary = require("../Cloudinary/cloudinary");
 const mongoose = require('mongoose')
 
+
+// synchronizing user data with community posts after updating user profile
+const syncUserDataInPosts = async (posts) => {
+    if (!posts || posts.length === 0) return posts;
+    
+    try {
+        // Extract unique user IDs from posts and comments
+        const userIds = new Set();
+        
+        posts.forEach(post => {
+            if (post.user && post.user._id) {
+                userIds.add(post.user._id.toString());
+            }
+            if (post.comments && post.comments.length > 0) {
+                post.comments.forEach(comment => {
+                    if (comment.user_id) {
+                        userIds.add(comment.user_id.toString());
+                    }
+                });
+            }
+        });
+
+        // Fetch current user data
+        const users = await User.find({ _id: { $in: Array.from(userIds) } })
+            .select('_id username profile_image');
+        
+        // Create a map for quick lookup
+        const userMap = new Map();
+        users.forEach(user => {
+            userMap.set(user._id.toString(), {
+                username: user.username,
+                profile_image: user.profile_image
+            });
+        });
+
+        // Update posts with current user data
+        posts.forEach(post => {
+            if (post.user && post.user._id) {
+                const currentUserData = userMap.get(post.user._id.toString());
+                if (currentUserData) {
+                    post.user.username = currentUserData.username;
+                    post.user.profile_image = currentUserData.profile_image;
+                }
+            }
+
+            // Update comments with current user data
+            if (post.comments && post.comments.length > 0) {
+                post.comments.forEach(comment => {
+                    if (comment.user_id) {
+                        const currentUserData = userMap.get(comment.user_id.toString());
+                        if (currentUserData) {
+                            comment.username = currentUserData.username;
+                            comment.profile_image = currentUserData.profile_image;
+                        }
+                    }
+                });
+            }
+        });
+
+        return posts;
+    } catch (error) {
+        console.error('Error syncing user data in posts:', error);
+        return posts; // Return original posts if sync fails
+    }
+};
+
+
  // GET All posts assigned to the user when logged in!
 // const getPosts = async (req, res) => {
 //     try {
@@ -56,10 +123,13 @@ const getAllPosts = async (req, res) => {
         const skip = (page - 1) * limit;
 
         // Fetch all posts from the database
-        const posts = await CommunityPost.find()
+        let posts = await CommunityPost.find()
             .sort({ createdAt: -1 }) // Sort by most recent first
             .skip(skip)
             .limit(limit);
+        
+        // Sync user data to ensure consistency
+        posts = await syncUserDataInPosts(posts);
 
         // Get the total number of posts in the database
         const total = await CommunityPost.countDocuments();
@@ -211,7 +281,7 @@ const getPost = async (req, res) => {
         }
 
         // Find and increment view count atomically
-        const post = await CommunityPost.findByIdAndUpdate(
+        let post = await CommunityPost.findByIdAndUpdate(
             id,
             { $inc: { views: 1 } },  // Increment views
             { new: true }            // Return updated document
@@ -224,7 +294,8 @@ const getPost = async (req, res) => {
                 error: 'no such posts'
             });
         }
-
+        const syncedPosts = await syncUserDataInPosts([post]);
+        post = syncedPosts[0];
         res.status(200).json({ success: true, data: post });
 
     } catch (error) {
@@ -463,9 +534,14 @@ const getPostComments = async (req, res) => {
             return res.status(404).json({ success: false, message: "Post not found" });
         }
         // pre sort before pagination
-    const sortedComments = post.comments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    paginatedComments = sortedComments.slice(skip, skip + limit).map(comment => comment.toObject ? comment.toObject() : comment);;
-        console.log(paginatedComments)
+        const sortedComments = post.comments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        paginatedComments = sortedComments.slice(skip, skip + limit).map(comment => comment.toObject ? comment.toObject() : comment);
+        
+        // Sync user data in comments
+        const syncedPost = await syncUserDataInPosts([{ ...post, comments: paginatedComments }]);
+        paginatedComments = syncedPost[0].comments;
+        
+        
         res.status(200).json({
             success: true,
             count: paginatedComments.length,

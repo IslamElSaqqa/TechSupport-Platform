@@ -3,9 +3,87 @@ const validator = require('validator')
 const bcrypt = require('bcrypt')
 
 
-const usernameRegex = /^(?!.*[_.]{2})[a-zA-Z0-9][a-zA-Z0-9._]{1,28}[a-zA-Z0-9]$/;
+// const usernameRegex = /^(?!.*[_.]{2})[a-zA-Z0-9][a-zA-Z0-9._]{1,28}[a-zA-Z0-9]$/;
 const phoneRegex = /^(010|011|012|015)\d{8}$/; 
 
+
+// Custom username validation function
+const validateUsername = (username) => {
+    const errors = [];
+    
+    // Check length
+    if (username.length < 3) {
+        errors.push("Username must be at least 3 characters long");
+    }
+    if (username.length > 30) {
+        errors.push("Username cannot exceed 30 characters");
+    }
+    
+    // Check if starts or ends with letter/number
+    if (!/^[a-zA-Z0-9]/.test(username)) {
+        errors.push("Username must start with a letter or number");
+    }
+    if (!/[a-zA-Z0-9]$/.test(username)) {
+        errors.push("Username must end with a letter or number");
+    }
+    
+    // Check for invalid characters
+    if (!/^[a-zA-Z0-9._]+$/.test(username)) {
+        errors.push("Username can only contain letters, numbers, periods (.), and underscores (_)");
+    }
+    
+    // Check for consecutive periods or underscores
+    if (/[_.]{2,}/.test(username)) {
+        errors.push("Username cannot have consecutive periods (.) or underscores (_)");
+    }
+    
+    // Check for spaces
+    if (/\s/.test(username)) {
+        errors.push("Username cannot contain spaces");
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors: errors
+    };
+}
+
+// creating a custom password validation
+const validatePassword = (password) => {
+    const errors = [];
+    
+    // Check minimum length
+    if (password.length < 8) {
+        errors.push("Password should be at least 8 characters long");
+    }
+    
+    // Check for uppercase letter
+    if (!/[A-Z]/.test(password)) {
+        errors.push("Password should contain at least one uppercase letter");
+    }
+    
+    // Check for lowercase letter
+    if (!/[a-z]/.test(password)) {
+        errors.push("Password should contain at least one lowercase letter");
+    }
+    
+    // Check for number
+    if (!/\d/.test(password)) {
+        errors.push("Password should contain at least one number");
+    }
+    
+    // Check for special character
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        errors.push("Password should contain at least one special character (!@#$%^&*()_+-=[]{}|;':\",./<>?)");
+    }
+    
+    return {
+        isValid: errors.length === 0,
+        errors: errors
+    };
+};
+
+// user model
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -15,12 +93,6 @@ const userSchema = new mongoose.Schema({
         lowercase: true, 
         minlength: [3, "Username must be at least 3 characters long"],
         maxlength: [30, "Username cannot exceed 30 characters"],
-        validate: {
-            validator: function (v) {
-                return usernameRegex.test(v);
-            },
-            message: "Invalid username format. Only letters, numbers, underscores (_), and periods (.) are allowed. No consecutive _ or ., and must start & end with a letter/number."
-        }
     },
     email: {
         type: String,
@@ -72,23 +144,26 @@ userSchema.statics.registerUser= async function (username, email, password_hash,
         throw Error('All fields must be filled!')
     }
 
-    if (!validator.matches(username, usernameRegex)) { 
-        throw Error('Invalid username')
+    // Enhanced username validation with specific error messages
+    const usernameValidation = validateUsername(username);
+    if (!usernameValidation.isValid) {
+        throw Error(usernameValidation.errors.join('\n'));
     }
 
     if (!validator.isEmail(email)) { 
         throw Error('Invalid Email!')
     }
 
-    if (!validator.isStrongPassword(password_hash)) { 
-        throw Error('Password is not strong enough!')
+    // Enhanced password validation with specific error messages
+    const passwordValidation = validatePassword(password_hash);
+    if (!passwordValidation.isValid) {
+        throw Error(passwordValidation.errors.join('\n'));
     }
      // Egyptian Regex phone number
     if (!validator.matches(phone_number, phoneRegex)) { 
         throw Error('Invalid phone_number')
     }
 
-    // const existingUser = await this.findOne({ $or: [{ email }, { username }, {phone_number}] });
     const existingEmail = await this.findOne({ email })
     if (existingEmail) { 
         throw Error('Email is already in use!')
