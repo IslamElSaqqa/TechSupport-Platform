@@ -1,0 +1,16 @@
+# Backend ignored directories
+backend/certs/
+backend/config/
+backend/node_modules/
+backend/uploads/
+
+# Backend ignored files
+backend/.env
+backend/cloudinaryInfo.txt
+
+# Frontend ignored directories
+frontend/node_modules/
+
+# System files
+.DS_Store
+Thumbs.db
